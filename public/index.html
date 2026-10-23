@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ManyTerminals - Multi-Terminal Agent Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/vendor/xterm.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Navigation Bar -->
+    <header id="top-bar">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+            <polyline points="6 9 9 12 6 15"></polyline>
+            <line x1="12" y1="15" x2="16" y2="15"></line>
+          </svg>
+        </div>
+        <span class="app-name">ManyTerminals</span>
+        <span id="connection-status" class="status-badge connected" title="PTY Server Status">
+          <span class="dot"></span> Connected
+        </span>
+      </div>
+
+      <!-- Center Controls: Layout & Broadcast -->
+      <div class="toolbar-center">
+        <!-- Layout Mode -->
+        <div class="segmented-control" title="Layout Mode">
+          <button class="seg-btn active" data-layout="auto">Auto</button>
+          <button class="seg-btn" data-layout="1">1 Col</button>
+          <button class="seg-btn" data-layout="2">2 Cols</button>
+          <button class="seg-btn" data-layout="3">3 Cols</button>
+          <button class="seg-btn" data-layout="4">4 Cols</button>
+        </div>
+
+        <!-- Broadcast Mode Toggle -->
+        <button id="broadcast-toggle" class="btn btn-secondary" title="Broadcast keystrokes to ALL terminals (Alt+B)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path>
+            <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"></path>
+            <circle cx="12" cy="12" r="2"></circle>
+            <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"></path>
+            <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"></path>
+          </svg>
+          <span>Broadcast</span>
+        </button>
+      </div>
+
+      <!-- Right Controls: Add Terminal & Count -->
+      <div class="toolbar-right">
+        <span id="term-counter" class="term-count-badge">1 Terminal</span>
+        <button id="add-terminal-btn" class="btn btn-primary" title="Add New Terminal (Alt+N)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>New Terminal</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Broadcast Alert Banner (shown when broadcast mode is ON) -->
+    <div id="broadcast-banner" class="broadcast-banner hidden">
+      <div class="banner-content">
+        <span class="pulse-icon">⚠️</span>
+        <strong>BROADCAST MODE IS ACTIVE:</strong> Everything you type will be sent to all terminals simultaneously.
+      </div>
+      <button id="broadcast-off-btn" class="btn btn-xs">Turn Off (Alt+B)</button>
+    </div>
+
+    <!-- Main Grid Container -->
+    <main id="grid-container" class="grid-auto">
+      <!-- Terminal Panes dynamically injected here -->
+    </main>
+
+    <!-- Floating Empty State (if all terminals are closed) -->
+    <div id="empty-state" class="empty-state hidden">
+      <div class="empty-icon">⌨️</div>
+      <h2>No Terminals Open</h2>
+      <p>Click below or press <kbd>Alt</kbd> + <kbd>N</kbd> to launch a new terminal.</p>
+      <button id="empty-add-btn" class="btn btn-primary btn-lg">+ Open Terminal</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/vendor/xterm.js"></script>
+  <script src="/vendor/addon-fit.js"></script>
+  <script src="/vendor/addon-web-links.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

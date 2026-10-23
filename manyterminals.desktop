@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=ManyTerminals
+Comment=Multi-Terminal Grid Manager for AI Agents & Tasks
+Exec=/home/lighthouse2815/Projects/manyterminals/start.sh
+Icon=manyterminals
+Terminal=false
+Type=Application
+Categories=Development;Utility;
+StartupWMClass=manyterminals
+Keywords=terminal;grid;multiplexer;agent;pty;

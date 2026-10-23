@@ -1,0 +1,27 @@
+{
+  "name": "manyterminals",
+  "version": "1.0.0",
+  "description": "Lightweight multi-terminal grid manager for AI agents and CLI tasks",
+  "main": "server.js",
+  "scripts": {
+    "start": "./start.sh",
+    "server": "node server.js",
+    "test": "node test-e2e.js"
+  },
+  "keywords": [
+    "terminal",
+    "multiplexer",
+    "grid",
+    "agents",
+    "xterm"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/addon-web-links": "^0.11.0",
+    "node-pty": "^1.1.0",
+    "ws": "^8.18.0",
+    "xterm": "^5.3.0"
+  }
+}
