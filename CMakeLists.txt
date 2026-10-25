@@ -31,3 +31,19 @@ target_link_libraries(manyterminals PRIVATE
 )
 
 install(TARGETS manyterminals DESTINATION bin)
+
+include(CTest)
+if(BUILD_TESTING)
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+    add_executable(window-controls-test
+        tests/WindowControlsTest.cpp
+        src/MainWindow.cpp
+        src/TerminalTile.cpp
+    )
+    target_include_directories(window-controls-test PRIVATE src)
+    target_link_libraries(window-controls-test PRIVATE
+        Qt6::Widgets Qt6::Test KF6::Parts KF6::CoreAddons
+    )
+    add_test(NAME window-controls COMMAND window-controls-test)
+    set_tests_properties(window-controls PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+endif()

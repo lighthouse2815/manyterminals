@@ -8,6 +8,8 @@
 #include <QButtonGroup>
 #include "TerminalTile.h"
 
+class QSizeGrip;
+
 enum class LayoutMode {
     Auto,
     Col1,
@@ -25,6 +27,8 @@ public:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void changeEvent(QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void addNewTerminal(const QString &title = QString());
@@ -55,4 +59,7 @@ private:
     QPushButton *m_broadcastBtn{nullptr};
     QLabel *m_counterLabel{nullptr};
     QButtonGroup *m_layoutGroup{nullptr};
+    QWidget *m_topBar{nullptr};
+    QToolButton *m_maximizeBtn{nullptr};
+    QSizeGrip *m_resizeGrip{nullptr};
 };

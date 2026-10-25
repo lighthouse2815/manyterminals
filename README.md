@@ -6,6 +6,7 @@
 
 ## 🌟 Tính năng nổi bật
 
+- **Thanh công cụ gọn như Chrome:** Không còn hàng tiêu đề riêng phía trên; nút thu nhỏ, phóng to/khôi phục và đóng nằm ở góc phải thanh công cụ. Kéo vùng trống trên thanh để di chuyển, nhấp đúp để phóng to/khôi phục; kéo góc dưới phải để đổi kích thước cửa sổ nổi.
 - **Native Qt6 Thuần túy (Siêu nhẹ & Tiết kiệm tối đa):**
   - Tích hợp trực tiếp engine terminal **KDE KonsolePart** gốc của hệ điều hành.
   - Dung lượng file nhị phân chỉ **~108 KB**.

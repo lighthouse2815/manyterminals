@@ -8,11 +8,15 @@
 #include <QToolButton>
 #include <QIcon>
 #include <QStyle>
+#include <QMouseEvent>
+#include <QSizeGrip>
+#include <QWindow>
 #include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    setWindowFlag(Qt::FramelessWindowHint);
     setupUi();
     setupShortcuts();
 
@@ -48,6 +52,7 @@ void MainWindow::setupUi()
 
     // Top Toolbar
     auto *topBar = new QWidget(rootWidget);
+    m_topBar = topBar;
     topBar->setObjectName(QStringLiteral("topBar"));
     topBar->setFixedHeight(46);
 
@@ -57,6 +62,7 @@ void MainWindow::setupUi()
 
     // Brand / Logo
     auto *brandLabel = new QLabel(QStringLiteral("⚡ ManyTerminals"), topBar);
+    brandLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
     brandLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 14px; color: #58a6ff;"));
     topLayout->addWidget(brandLabel);
 
@@ -124,6 +130,47 @@ void MainWindow::setupUi()
     connect(addBtn, &QPushButton::clicked, this, [this]() { addNewTerminal(); });
     topLayout->addWidget(addBtn);
 
+    // Keep window controls in the existing toolbar, without a second title row.
+    auto *windowControls = new QWidget(topBar);
+    auto *controlsLayout = new QHBoxLayout(windowControls);
+    controlsLayout->setContentsMargins(0, 0, 0, 0);
+    controlsLayout->setSpacing(0);
+    windowControls->setStyleSheet(QStringLiteral(
+        "QToolButton { border: none; background: transparent; border-radius: 4px; }"
+        "QToolButton:hover { background: #303744; }"
+        "QToolButton#windowClose:hover { background: #da3633; }"
+    ));
+
+    auto *minimizeBtn = new QToolButton(windowControls);
+    minimizeBtn->setObjectName(QStringLiteral("windowMinimize"));
+    minimizeBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
+    minimizeBtn->setToolTip(QStringLiteral("Thu nhỏ cửa sổ"));
+    minimizeBtn->setAccessibleName(minimizeBtn->toolTip());
+    minimizeBtn->setFixedSize(36, 32);
+    connect(minimizeBtn, &QToolButton::clicked, this, &QWidget::showMinimized);
+    controlsLayout->addWidget(minimizeBtn);
+
+    m_maximizeBtn = new QToolButton(windowControls);
+    m_maximizeBtn->setObjectName(QStringLiteral("windowMaximize"));
+    m_maximizeBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
+    m_maximizeBtn->setToolTip(QStringLiteral("Phóng to cửa sổ"));
+    m_maximizeBtn->setAccessibleName(m_maximizeBtn->toolTip());
+    m_maximizeBtn->setFixedSize(36, 32);
+    connect(m_maximizeBtn, &QToolButton::clicked, this, [this]() {
+        isMaximized() ? showNormal() : showMaximized();
+    });
+    controlsLayout->addWidget(m_maximizeBtn);
+
+    auto *closeBtn = new QToolButton(windowControls);
+    closeBtn->setObjectName(QStringLiteral("windowClose"));
+    closeBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+    closeBtn->setToolTip(QStringLiteral("Đóng cửa sổ"));
+    closeBtn->setAccessibleName(closeBtn->toolTip());
+    closeBtn->setFixedSize(36, 32);
+    connect(closeBtn, &QToolButton::clicked, this, &QWidget::close);
+    controlsLayout->addWidget(closeBtn);
+    topLayout->addWidget(windowControls);
+
     rootLayout->addWidget(topBar);
 
     // Broadcast Warning Banner
@@ -152,6 +199,11 @@ void MainWindow::setupUi()
 
     rootLayout->addWidget(m_centralContainer, 1);
     setCentralWidget(rootWidget);
+
+    // Qt supplies the floating-window resize interaction on Wayland and X11.
+    m_resizeGrip = new QSizeGrip(this);
+    m_resizeGrip->setObjectName(QStringLiteral("windowResizeGrip"));
+    m_resizeGrip->resize(m_resizeGrip->sizeHint());
 }
 
 void MainWindow::setupShortcuts()
@@ -351,6 +403,19 @@ void MainWindow::updateCounter()
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
+    if (watched == m_topBar) {
+        if (event->type() == QEvent::MouseButtonDblClick
+            && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton) {
+            m_maximizeBtn->click();
+            return true;
+        }
+        if (event->type() == QEvent::MouseButtonPress
+            && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton
+            && windowHandle()) {
+            return windowHandle()->startSystemMove();
+        }
+    }
+
     if (!m_broadcastMode) {
         return QMainWindow::eventFilter(watched, event);
     }
@@ -385,4 +450,25 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    QMainWindow::changeEvent(event);
+    if (event->type() == QEvent::WindowStateChange && m_maximizeBtn) {
+        m_maximizeBtn->setIcon(style()->standardIcon(
+            isMaximized() ? QStyle::SP_TitleBarNormalButton : QStyle::SP_TitleBarMaxButton));
+        m_maximizeBtn->setToolTip(isMaximized()
+            ? QStringLiteral("Khôi phục cửa sổ") : QStringLiteral("Phóng to cửa sổ"));
+        m_maximizeBtn->setAccessibleName(m_maximizeBtn->toolTip());
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    if (m_resizeGrip) {
+        m_resizeGrip->move(width() - m_resizeGrip->width(), height() - m_resizeGrip->height());
+        m_resizeGrip->raise();
+    }
 }
