@@ -136,14 +136,14 @@ void MainWindow::setupUi()
     controlsLayout->setContentsMargins(0, 0, 0, 0);
     controlsLayout->setSpacing(0);
     windowControls->setStyleSheet(QStringLiteral(
-        "QToolButton { border: none; background: transparent; border-radius: 4px; }"
+        "QToolButton { border: none; background: transparent; border-radius: 4px; color: #e6edf3; font-size: 18px; }"
         "QToolButton:hover { background: #303744; }"
         "QToolButton#windowClose:hover { background: #da3633; }"
     ));
 
     auto *minimizeBtn = new QToolButton(windowControls);
     minimizeBtn->setObjectName(QStringLiteral("windowMinimize"));
-    minimizeBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
+    minimizeBtn->setText(QStringLiteral("−"));
     minimizeBtn->setToolTip(QStringLiteral("Thu nhỏ cửa sổ"));
     minimizeBtn->setAccessibleName(minimizeBtn->toolTip());
     minimizeBtn->setFixedSize(36, 32);
@@ -152,7 +152,7 @@ void MainWindow::setupUi()
 
     m_maximizeBtn = new QToolButton(windowControls);
     m_maximizeBtn->setObjectName(QStringLiteral("windowMaximize"));
-    m_maximizeBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
+    m_maximizeBtn->setText(QStringLiteral("□"));
     m_maximizeBtn->setToolTip(QStringLiteral("Phóng to cửa sổ"));
     m_maximizeBtn->setAccessibleName(m_maximizeBtn->toolTip());
     m_maximizeBtn->setFixedSize(36, 32);
@@ -163,7 +163,7 @@ void MainWindow::setupUi()
 
     auto *closeBtn = new QToolButton(windowControls);
     closeBtn->setObjectName(QStringLiteral("windowClose"));
-    closeBtn->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+    closeBtn->setText(QStringLiteral("×"));
     closeBtn->setToolTip(QStringLiteral("Đóng cửa sổ"));
     closeBtn->setAccessibleName(closeBtn->toolTip());
     closeBtn->setFixedSize(36, 32);
@@ -456,8 +456,7 @@ void MainWindow::changeEvent(QEvent *event)
 {
     QMainWindow::changeEvent(event);
     if (event->type() == QEvent::WindowStateChange && m_maximizeBtn) {
-        m_maximizeBtn->setIcon(style()->standardIcon(
-            isMaximized() ? QStyle::SP_TitleBarNormalButton : QStyle::SP_TitleBarMaxButton));
+        m_maximizeBtn->setText(isMaximized() ? QStringLiteral("❐") : QStringLiteral("□"));
         m_maximizeBtn->setToolTip(isMaximized()
             ? QStringLiteral("Khôi phục cửa sổ") : QStringLiteral("Phóng to cửa sổ"));
         m_maximizeBtn->setAccessibleName(m_maximizeBtn->toolTip());

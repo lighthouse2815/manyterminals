@@ -21,9 +21,9 @@ private slots:
         QVERIFY(minimize->isVisible() && maximize->isVisible() && close->isVisible());
         QCOMPARE(minimize->parentWidget(), maximize->parentWidget());
         QCOMPARE(maximize->parentWidget(), close->parentWidget());
-        QVERIFY(!minimize->icon().isNull());
-        QVERIFY(!maximize->icon().isNull());
-        QVERIFY(!close->icon().isNull());
+        QVERIFY(!minimize->text().isEmpty());
+        QVERIFY(!maximize->text().isEmpty());
+        QVERIFY(!close->text().isEmpty());
 
         QTest::mouseClick(maximize, Qt::LeftButton);
         QTRY_VERIFY(window.isMaximized());
